@@ -9,23 +9,31 @@ import android.util.Log;
 
 public class BackService extends Service {
 
+    private StringBuilder buffer;
     dbmaker db;
     @Override
     public void onCreate() {
         super.onCreate();
 
         Log.e("BACKGROUND","SERVICE CREATED");
-         db = new dbmaker(this);
+        db = new dbmaker(this);
+        buffer = new StringBuilder();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        if(intent!=null)
-        {
-            Log.e("BACKGROUND"," "+ intent.getStringExtra("Character"));
+        if(intent!=null) {
+            String character = intent.getStringExtra("Character");
+            Log.e("BACKGROUND"," "+ character);
 
-            writeToSDFile((intent.getStringExtra("Character")));
+            buffer.append(character);
+            if (buffer.length() > 140) {
+                Log.e("BACKGROUND", "DATA: " + buffer.toString());
+                buffer.setLength(0);    // resetting buffer
+            }
+
+            writeToSDFile(character);
 
         }
         return START_STICKY;
@@ -37,22 +45,24 @@ public class BackService extends Service {
     }
 
     private void writeToSDFile(String data){
+        boolean done = db.insertData(data);
+        if(done)
+            Log.e("VALUES DB","INSERTED");
+        else
+            Log.e("VALUES DB","FAILED");
 
+        Cursor c = db.getData();
+        if(c.getCount()==0) {
+            Log.e("DATABASE","EMPTY");
+            return;
+        }
 
-    boolean done = db.insertdata(data);
-    if(done==true)
-        Log.e("VALUES DB","INSERTED");
-    else
-        Log.e("VALUES DB","FAAILED");
-    Cursor c = db.getData();
-    if(c.getCount()==0) {
-        Log.e("DATABASE","EMOPTY");
-        return;
-    }
-    while(c.moveToNext()){
-        Log.e("VALUES",c.getString(0));
-    }
-
+        int counter = 0;
+        while(c.moveToNext()){
+            Log.e("VALUES",c.getString(0));
+            if (++counter == 1)
+                break;
+        }
     }
 
 }
