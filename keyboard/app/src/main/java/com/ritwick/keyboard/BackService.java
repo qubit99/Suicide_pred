@@ -131,7 +131,7 @@ public class BackService extends Service {
     }
     void createNotif(){
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            Notification notification = new Notification.Builder(this,CHANNEL_ID).setContentTitle("DATA").setContentText("INSerted").build();
+            Notification notification = new Notification.Builder(this,CHANNEL_ID).setContentTitle("HEY There").setContentText("Dont worry We're Here for help").build();
             notifmanager.notify(1,notification);
         }
         Log.e("IN FUNCTION","BAckSPACE");
