@@ -21,8 +21,11 @@ public class BackService extends Service {
     private StringBuffer sb = new StringBuffer();
     dbmaker db;
     int c=1;
-    float pred ;
+    StringBuffer s = new StringBuffer();
+    float pred[][] ;
     HashSet<String> keywords = new HashSet<>();
+    Classifier cf;
+
 
     public static final String TAG = "THread";
     @Override
@@ -40,7 +43,11 @@ public class BackService extends Service {
                     Thread.sleep(5000);
 
                     Log.e(TAG, "Running Classifier");
-                    createNotif();
+                    pred=cf.classify(s.toString());
+                    if(pred[0][0]>0.5)
+                        createNotif("SUICIDAL");
+                    else
+                        createNotif("NOT SUICIDAL");
 
                 } catch (Exception e) {
                     Log.e("Error", e.getMessage(), e);
@@ -98,6 +105,7 @@ public class BackService extends Service {
 
         int counter = 0;
         while(c.moveToNext()){
+            s.append(c.getString(0));
             Log.e("VALUES",c.getString(0));
             if (++counter == 1)
                 break;
@@ -129,9 +137,9 @@ public class BackService extends Service {
         }
         sb = new StringBuffer();
     }
-    void createNotif(){
+    void createNotif(String x){
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            Notification notification = new Notification.Builder(this,CHANNEL_ID).setContentTitle("HEY There").setContentText("Dont worry We're Here for help").build();
+            Notification notification = new Notification.Builder(this,CHANNEL_ID).setContentTitle("HEY There").setContentText(x).build();
             notifmanager.notify(1,notification);
         }
         Log.e("IN FUNCTION","BAckSPACE");
