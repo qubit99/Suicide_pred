@@ -2,7 +2,6 @@ package com.ritwick.keyboard;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -13,11 +12,11 @@ import java.util.concurrent.TimeUnit;
 
 public  class dbmaker extends SQLiteOpenHelper {
 
-    private static final String DB_NAME = Resources.getSystem().getString(R.string.db_name);
-    private static final String TABLE_NAME = Resources.getSystem().getString(R.string.table_name);
-    private static final String COL_CHARS = Resources.getSystem().getString(R.string.col_chars);
-    private static final String COL_PK = Resources.getSystem().getString(R.string.col_pk);
-    private static final String COL_TIMESTAMP = Resources.getSystem().getString(R.string.col_timestamp);
+    private static final String DB_NAME = "data1.db";
+    private static final String TABLE_NAME = "Words";
+    private static final String COL_CHARS = "chars";
+    private static final String COL_PK = "id";
+    private static final String COL_TIMESTAMP = "timestamp";
 
     public dbmaker(@Nullable Context context) {
         super(context, DB_NAME, null, 1);
@@ -38,7 +37,7 @@ public  class dbmaker extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    boolean insertData(String s){
+    public boolean insertData(String s){
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
@@ -49,8 +48,7 @@ public  class dbmaker extends SQLiteOpenHelper {
         long result = db.insert(TABLE_NAME,null,contentValues);
         return result != -1;
     }
-
-    Cursor getData() {
+    public Cursor getData() {
         String getQuery = String.format("SELECT %s FROM %s ORDER BY %s DESC;",
                 COL_CHARS, TABLE_NAME, COL_TIMESTAMP);
 
