@@ -10,8 +10,8 @@ search_queries = {'kill me', 'suicide', 'suicidal', 'my friend is suicidal', 'fe
 
 if __name__ == "__main__":
 
-    reddit = praw.Reddit(client_id='jazU2BeYT1YamQ', client_secret="tMctKBrH3DunCFkqpOR15uVP5IM",
-                         password='anshul2007', user_agent='personal script by /u/qubit',
+    reddit = praw.Reddit(client_id='', client_secret="",
+                         password='', user_agent='personal script by /u/qubit',
                          username='architranjan9')
 
     print(reddit.user.me())
