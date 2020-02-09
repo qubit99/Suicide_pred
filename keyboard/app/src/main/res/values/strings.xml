@@ -1,8 +1,14 @@
 <resources>
     <string name="app_name">MyKeyboard</string>
 
+    <string name="simple_ime">Mykeyboard</string>
+    <string name="subtype_en_US">English</string>
 
-        <string name="simple_ime">Mykeyboard</string>
-        <string name="subtype_en_US">English</string>
+    <!-- DATABASE -->
+    <string name="db_name">data1.db</string>
+    <string name="table_name">Words</string>
+    <string name="col_pk">id</string>
+    <string name="col_timestamp">timestamp</string>
+    <string name="col_chars">char</string>
 
 </resources>

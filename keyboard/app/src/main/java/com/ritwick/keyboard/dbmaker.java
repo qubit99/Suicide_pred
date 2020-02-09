@@ -8,11 +8,15 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
+import java.util.concurrent.TimeUnit;
+
 public  class dbmaker extends SQLiteOpenHelper {
 
-    public static final String DB_NAME = "data.db";
-    public static final String TABLE_NAME = "words";
-    public static final String COL_NAME = "chars";
+    private static final String DB_NAME = "data1.db";
+    private static final String TABLE_NAME = "Words";
+    private static final String COL_CHARS = "chars";
+    private static final String COL_PK = "id";
+    private static final String COL_TIMESTAMP = "timestamp";
 
     public dbmaker(@Nullable Context context) {
         super(context, DB_NAME, null, 1);
@@ -21,28 +25,34 @@ public  class dbmaker extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE "+TABLE_NAME + "(chars VARCHAR)");
+        String createQuery = String.format("CREATE TABLE %s (%s INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, %s TEXT NOT NULL, %s TEXT);",
+                TABLE_NAME, COL_PK, COL_TIMESTAMP, COL_CHARS);
+        db.execSQL(createQuery);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS "+TABLE_NAME);
+        String dropTableQuery = String.format("DROP TABLE IF EXISTS %s", TABLE_NAME);
+        db.execSQL(dropTableQuery);
         onCreate(db);
     }
 
-    public boolean insertdata(String s){
+    public boolean insertData(String s){
         SQLiteDatabase db = this.getWritableDatabase();
+
         ContentValues contentValues = new ContentValues();
-        contentValues.put(COL_NAME,s);
+        String ts = String.valueOf(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
+        contentValues.put(COL_TIMESTAMP, ts);
+        contentValues.put(COL_CHARS, s);
+
         long result = db.insert(TABLE_NAME,null,contentValues);
-        if(result==-1)
-            return false;
-        else
-            return true;
+        return result != -1;
     }
-    public Cursor getData(){
+    public Cursor getData() {
+        String getQuery = String.format("SELECT %s FROM %s ORDER BY %s DESC;",
+                COL_CHARS, TABLE_NAME, COL_TIMESTAMP);
+
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor c =db.rawQuery("SELECT * FROM "+ TABLE_NAME,null);
-        return c;
+        return  db.rawQuery(getQuery,null);
     }
 }
