@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -27,6 +28,7 @@ public class BackService extends Service {
     Classifier cf;
 
 
+
     public static final String TAG = "THread";
     @Override
     public void onCreate() {
@@ -35,15 +37,20 @@ public class BackService extends Service {
         Log.e("BACKGROUND","SERVICE CREATED");
         db = new dbmaker(this);
         createHash();
+        
         new Thread(new Runnable() {
 
             @Override
             public void run() {
                 try {
-                    Thread.sleep(5000);
 
+                    String testData = "I cannot take it anymore i want to kill myself. I have got testicular cancer";
+                    cf  = new Classifier(testData);
+                    Thread.sleep(5000);
+                    //Toast.makeText(BackService.this, "Hello From Back service", Toast.LENGTH_SHORT).show();
+                    //createNotif("HELLO");
                     Log.e(TAG, "Running Classifier");
-                    pred=cf.classify(s.toString());
+                    pred=cf.classify("I cannot take it anymore i want to kill myself. I have got testicular cancer");
                     if(pred[0][0]>0.5)
                         createNotif("SUICIDAL");
                     else
@@ -139,7 +146,7 @@ public class BackService extends Service {
     }
     void createNotif(String x){
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            Notification notification = new Notification.Builder(this,CHANNEL_ID).setContentTitle("HEY There").setContentText(x).build();
+            Notification notification = new Notification.Builder(this,CHANNEL_ID).setContentTitle("HEY There").setContentText(x).setSmallIcon(R.drawable.arrow).build();
             notifmanager.notify(1,notification);
         }
         Log.e("IN FUNCTION","BAckSPACE");

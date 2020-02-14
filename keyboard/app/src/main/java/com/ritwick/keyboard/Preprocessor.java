@@ -13,7 +13,7 @@ class Preprocessor {
         BufferedReader br = null;
 
         try {
-            br = new BufferedReader(new FileReader("word_indices.txt"));
+            br = new BufferedReader(new FileReader("assets/w.txt"));
             while ((strCurrentLine = br.readLine()) != null) {
                 String[] str = strCurrentLine.split(" ");
                 word_index.put(str[0], Integer.parseInt(str[1]));
