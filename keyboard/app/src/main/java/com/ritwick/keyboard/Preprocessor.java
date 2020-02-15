@@ -1,4 +1,8 @@
 package com.ritwick.keyboard;
+import android.app.Activity;
+import android.content.Context;
+import android.content.ContextWrapper;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.io.*;
@@ -7,13 +11,16 @@ class Preprocessor {
     private static final int MODEL_INPUT_SHAPE = 150;
     private Map<String, Integer> word_index;
 
-    public Preprocessor() {
+    public Preprocessor(Context context) {
+
         String strCurrentLine;
         word_index = new HashMap<>();
         BufferedReader br = null;
 
         try {
-            br = new BufferedReader(new FileReader("assets/w.txt"));
+            br = new BufferedReader(new InputStreamReader(
+                    context.getAssets().open("word_indices.txt")
+            ));
             while ((strCurrentLine = br.readLine()) != null) {
                 String[] str = strCurrentLine.split(" ");
                 word_index.put(str[0], Integer.parseInt(str[1]));
@@ -30,7 +37,7 @@ class Preprocessor {
         }
     }
 
-    public static String cleanText(String text){
+    static String cleanText(String text){
         String clean_text = text.toLowerCase();
         clean_text = clean_text.replaceAll("([A-Za-z]+[\\d@]+[\\w@]*|[\\d@]+[A-Za-z]+[\\w@]*)+", "");
         clean_text = clean_text.replaceAll("<!--?.*?-->", "");
@@ -38,7 +45,8 @@ class Preprocessor {
         clean_text = clean_text.trim();
         return clean_text;
     }
-    public float[][] textToInputArray(String text) {
+
+    float[][] textToInputArray(String text) {
         float[][] input = new float[1][MODEL_INPUT_SHAPE];
         String clean_text = cleanText(text);
         String[] words = clean_text.split(" ");
