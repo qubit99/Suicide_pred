@@ -1,13 +1,22 @@
 package com.ritwick.keyboard;
-import java.io.File;
+import android.content.Context;
+import org.tensorflow.lite.support.common.FileUtil;
+import java.io.IOException;
+import java.nio.MappedByteBuffer;
+
 import org.tensorflow.lite.Interpreter;
 
 public class Classifier {
-    File tflite_model;
+    private MappedByteBuffer tflite_model;
     Preprocessor preprocessor;
-    public Classifier(String file) {
-        tflite_model = new File(file);
-        preprocessor = new Preprocessor();
+    public Classifier(Context context, String file) {
+
+        try {
+            tflite_model = FileUtil.loadMappedFile(context, file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        preprocessor = new Preprocessor(context);
     }
 
     public float[][] classify(String str) {

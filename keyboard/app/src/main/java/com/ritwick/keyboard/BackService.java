@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -22,12 +23,12 @@ public class BackService extends Service {
     dbmaker db;
     int c=1;
     StringBuffer s = new StringBuffer();
-    float pred[][] ;
+    float[][] pred;
     HashSet<String> keywords = new HashSet<>();
     Classifier cf;
 
 
-    public static final String TAG = "THread";
+    public static final String TAG = "Thread";
     @Override
     public void onCreate() {
         super.onCreate();
@@ -35,19 +36,24 @@ public class BackService extends Service {
         Log.e("BACKGROUND","SERVICE CREATED");
         db = new dbmaker(this);
         createHash();
+
         new Thread(new Runnable() {
 
             @Override
             public void run() {
                 try {
-                    Thread.sleep(5000);
-
-                    Log.e(TAG, "Running Classifier");
-                    pred=cf.classify(s.toString());
-                    if(pred[0][0]>0.5)
-                        createNotif("SUICIDAL");
-                    else
-                        createNotif("NOT SUICIDAL");
+//                    String modelPath = "lstm.model.tflite";
+//                    String testData = "I cannot take it anymore i want to kill myself. I have got testicular cancer";
+//                    cf = new Classifier(getApplicationContext(),modelPath);
+//                    Thread.sleep(5000);
+//                    //Toast.makeText(BackService.this, "Hello From Back service", Toast.LENGTH_SHORT).show();
+                        createNotif("HELLO");
+//                    Log.e(TAG, "Running Classifier");
+//                    pred=cf.classify(testData);
+//                    if(pred[0][0]>=0.5)
+//                        createNotif("SUICIDAL");
+//                    else
+//                        createNotif("NOT SUICIDAL");
 
                 } catch (Exception e) {
                     Log.e("Error", e.getMessage(), e);
@@ -65,11 +71,7 @@ public class BackService extends Service {
 
             Log.e("BACKGROUND"," "+ character);
 
-
-
             writeToSDFile(character);
-
-
 
         }
         return START_STICKY;
@@ -113,10 +115,10 @@ public class BackService extends Service {
     }
 
     public void store(){
-        String[] words = sb.toString().split("\\s");
-        for(String w : words){
-            //Log.e("WORDS",w);
-            if(keywords.contains(w)){
+
+        for(String w : keywords){
+            //Log.e("KEYWORDS",w);
+            if(sb.toString().contains(w)){
                 boolean done = db.insertData(sb.toString());
                 c= 5;
                 if (done)
@@ -139,13 +141,12 @@ public class BackService extends Service {
     }
     void createNotif(String x){
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            Notification notification = new Notification.Builder(this,CHANNEL_ID).setContentTitle("HEY There").setContentText(x).build();
+            Notification notification = new Notification.Builder(this,CHANNEL_ID).setContentTitle("HEY There").setContentText(x).setSmallIcon(R.drawable.arrow).build();
             notifmanager.notify(1,notification);
         }
         Log.e("IN FUNCTION","BAckSPACE");
     }
     void createHash(){
-
         keywords.add("kill me");
         keywords.add("suicide");
         keywords.add("suicidal");
@@ -169,7 +170,5 @@ public class BackService extends Service {
         keywords.add("cheated on me");
         keywords.add("i cry");
         keywords.add("life sucks");
-
     }
-
 }
